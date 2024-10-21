@@ -7,6 +7,10 @@
 
 ## 2024
 
+<li><a href="https://arxiv.org/abs/2404.06564">ADer: A Comprehensive Benchmark for Multi-class Visual Anomaly Detection</a>,  
+     Jiangning Zhang*, <strong>Haoyang He*</strong>, Zhenye Gan, Qingdong He, Yuxuan Cai, Zhucun Xue, Yabiao Wang, Chengjie Wang, Lei Xie, Yong Liu
+      <strong>arxiv. <span style="color:red"> The first Mamba model for multi-class anomaly detection. </span> </strong> <a href="https://arxiv.org/pdf/2406.03262">[Paper]</a> | <a href="https://github.com/zhangzjn/ader">[Code]</a>  </li>
+
 <li><a href="https://arxiv.org/abs/2404.06564">MambaAD: Exploring State Space Models for Multi-class Unsupervised Anomaly Detection</a>,  
      <strong>Haoyang He*</strong>, Yuhu Bai*, Jiangning Zhang, Qingdong He, Hongxu Chen, Zhenye Gan, Chengjie Wang, Xiangtai Li, Guanzhong Tian, Lei Xie 
       <strong>(NeurIPS). 2024. <span style="color:red"> The first Mamba model for multi-class anomaly detection. </span> </strong> <a href="https://arxiv.org/abs/2404.06564">[Paper]</a> | <a href="https://github.com/lewandofskee/MambaAD">[Code]</a> | <a href="https://lewandofskee.github.io/projects/MambaAD">[Project]</a> </li>

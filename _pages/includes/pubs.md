@@ -9,7 +9,7 @@
 
 <li><a href="https://arxiv.org/abs/2404.06564">MambaAD: Exploring State Space Models for Multi-class Unsupervised Anomaly Detection</a>,  
      <strong>Haoyang He*</strong>, Yuhu Bai*, Jiangning Zhang, Qingdong He, Hongxu Chen, Zhenye Gan, Chengjie Wang, Xiangtai Li, Guanzhong Tian, Lei Xie 
-      <strong>arxiv. <span style="color:red"> The first Mamba model for multi-class anomaly detection. </span> </strong> <a href="https://arxiv.org/abs/2404.06564">[Paper]</a> | <a href="https://github.com/lewandofskee/MambaAD">[Code]</a> | <a href="https://lewandofskee.github.io/projects/MambaAD">[Project]</a> </li>
+      <strong>(NeurIPS). 2024. <span style="color:red"> The first Mamba model for multi-class anomaly detection. </span> </strong> <a href="https://arxiv.org/abs/2404.06564">[Paper]</a> | <a href="https://github.com/lewandofskee/MambaAD">[Code]</a> | <a href="https://lewandofskee.github.io/projects/MambaAD">[Project]</a> </li>
 
 <li><a href="https://ojs.aaai.org/index.php/AAAI/article/view/28690">DiAD: A Diffusion-Based Framework for Multi-Class Anomaly Detection</a>,  
      <strong>Haoyang He*</strong>, Jiangning Zhang*, Hongxu Chen, Xuhai Chen, Zhishan Li, Xu Chen, Yabiao Wang, Chengjie Wang, Lei Xie 

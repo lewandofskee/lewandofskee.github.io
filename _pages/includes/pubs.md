@@ -9,11 +9,11 @@
 
 <li><a href="https://arxiv.org/pdf/2407.11935">Learning Multi-view Anomaly Detection</a>,  
      <strong>Haoyang He</strong>, Jiangning Zhang, Guanzhong Tian, Lei Xie
-      <strong>arxiv. <span style="color:red"> The first attempt for multi-view anomaly detection. </span> </strong> <a href="https://arxiv.org/pdf/2407.11935">[Paper]</a>  </li>
+      <strong>(arxiv.) <span style="color:red"> The first attempt for multi-view anomaly detection. </span> </strong> <a href="https://arxiv.org/pdf/2407.11935">[Paper]</a>  </li>
 
 <li><a href="https://arxiv.org/abs/2404.06564">ADer: A Comprehensive Benchmark for Multi-class Visual Anomaly Detection</a>,  
      Jiangning Zhang*, <strong>Haoyang He*</strong>, Zhenye Gan, Qingdong He, Yuxuan Cai, Zhucun Xue, Yabiao Wang, Chengjie Wang, Lei Xie, Yong Liu
-      <strong>arxiv. <span style="color:red"> A comprehensive library for benchmarking multi-class visual anomaly detection. </span> </strong> <a href="https://arxiv.org/pdf/2406.03262">[Paper]</a> | <a href="https://github.com/zhangzjn/ader">[Code]</a>  </li>
+      <strong>(arxiv.) <span style="color:red"> A comprehensive library for benchmarking multi-class visual anomaly detection. </span> </strong> <a href="https://arxiv.org/pdf/2406.03262">[Paper]</a> | <a href="https://github.com/zhangzjn/ader">[Code]</a>  </li>
 
 <li><a href="https://arxiv.org/abs/2404.06564">MambaAD: Exploring State Space Models for Multi-class Unsupervised Anomaly Detection</a>,  
      <strong>Haoyang He*</strong>, Yuhu Bai*, Jiangning Zhang, Qingdong He, Hongxu Chen, Zhenye Gan, Chengjie Wang, Xiangtai Li, Guanzhong Tian, Lei Xie 

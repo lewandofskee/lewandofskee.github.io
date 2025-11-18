@@ -1,0 +1,2216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ditto: Scaling Instruction-Based Video Editing with a High-Quality Synthetic Dataset</title>
+    <link rel="icon" href="present.png" type="image/png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e8e8e8;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .hero-section {
+            /* height: 100vh; */
+            padding: 4rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+        }
+
+        .hero-title {
+            font-family: 'EB Garamond', serif;
+            font-size: clamp(1.5rem, 8vw, 4rem);
+            font-weight: 200;
+            font-style: italic;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #f8f9fa 0%, #adb5bd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: #adb5bd;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            margin-bottom: 2rem;
+        }
+
+        .authors-section {
+            margin-top: 1rem;
+            text-align: center;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .authors {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0rem 1.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .author-block {
+            font-size: 1rem;
+            color: #e8e8e8;
+            font-weight: 400;
+            white-space: nowrap;
+        }
+
+        .author-block sup {
+            font-size: 0.75em;
+            color: #adb5bd;
+        }
+
+        .author-block a {
+            color: #e8e8e8;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .author-block a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .author-affiliation {
+            margin-bottom: 1.5rem;
+            color: #ced4da;
+            font-size: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .affiliation-text {
+            font-weight: 300;
+            letter-spacing: 0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.4rem;
+        }
+
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1.5rem;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+            color: #e8e8e8;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-button:hover::before {
+            left: 100%;
+        }
+
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            color: #ffffff;
+        }
+
+        .nav-button i,
+        .nav-button .icon {
+            font-size: 1rem;
+        }
+
+        .nav-button .icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .promo-video-section {
+            margin-top: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .promo-video-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            background: #000;
+            position: relative;
+        }
+
+        .promo-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .promo-video-description {
+            font-size: 0.8rem;
+        }
+
+        .editing-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            position: relative;
+        }
+
+        .editing-container {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .editing-content {
+            z-index: 2;
+            position: relative;
+        }
+
+        .editing-type {
+            font-family: 'EB Garamond', serif;
+            font-size: 3rem;
+            font-weight: 200;
+            font-style: italic;
+            color: #f8f9fa;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            line-height: 1.2;
+        }
+
+        .editing-description {
+            font-size: 1rem;
+            color: #ced4da;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            margin-inline: auto;
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .more-results-section {
+            min-height: 100vh;
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            position: relative;
+        }
+
+        .more-results-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .more-results-title {
+            font-family: 'EB Garamond', serif;
+            font-size: 3rem;
+            font-weight: 200;
+            font-style: italic;
+            color: #f8f9fa;
+            text-align: center;
+            margin-bottom: 4rem;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .more-results-grid {
+            display: grid;
+            gap: 4rem;
+        }
+
+        .more-results-category {
+            text-align: center;
+        }
+
+        .more-results-category-title {
+            font-family: 'EB Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 200;
+            font-style: italic;
+            color: #e8e8e8;
+            margin-bottom: 2rem;
+        }
+
+        .more-videos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .two-col-videos-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .one-col-video-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .more-video-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow:
+                0 15px 30px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            background: #000;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .more-video-container:hover {
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                0 0 0 2px rgba(255, 255, 255, 0.15);
+        }
+
+        .more-video-container .slider-handle {
+            /* Initial position set by JavaScript */
+        }
+
+        .more-video-container .video-after {
+            clip-path: inset(0 30% 0 0);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            background: #000;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .video-container:hover {
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.5),
+                0 0 0 2px rgba(255, 255, 255, 0.15),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .video-prompt {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: #ffffff;
+            padding: 2rem 1.5rem 1.5rem;
+            font-size: 0.8rem;
+            line-height: 1;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .video-container:hover .video-prompt,
+        .more-video-container:hover .video-prompt,
+        .video-container.show-prompt .video-prompt,
+        .more-video-container.show-prompt .video-prompt {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .video-slider {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            transform: translateZ(0);
+            /* Force hardware acceleration */
+        }
+
+        .video-before,
+        .video-after {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-after {
+            clip-path: inset(0 100% 0 0);
+            transition: clip-path 0.1s ease-out;
+            will-change: clip-path;
+        }
+
+        .slider-handle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, #ffffff, #e9ecef);
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            transition: transform 0.1s ease-out;
+            will-change: transform;
+        }
+
+        .slider-handle::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-indicator {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+        }
+
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: #ffffff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            transform: scale(1.5);
+        }
+
+        .section-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.02) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Section Headers */
+        .section-header {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            position: relative;
+        }
+
+        .section-header-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section-header-content .dataset-image {
+            width: 100%;
+            border-radius: 0.4rem;
+            margin-top: 1rem;
+        }
+
+        .section-header-content .model-image {
+            width: 100%;
+            border-radius: 0.4rem;
+            margin-top: 1rem;
+        }
+
+        .section-header-content .image-caption {
+            font-size: 0.8rem;
+            text-align: left;
+            line-height: 1.2;
+        }
+
+        .section-title {
+            font-family: 'EB Garamond', serif;
+            font-size: 3rem;
+            font-weight: 200;
+            font-style: italic;
+            color: #f8f9fa;
+            margin-bottom: 2rem;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            color: #ced4da;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* Model Comparison Table */
+        .comparison-table-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 1rem;
+            margin-bottom: 4rem;
+            table-layout: fixed;
+        }
+
+        .comparison-table th {
+            font-size: 1.1rem;
+            font-weight: 300;
+            font-style: italic;
+            color: #f8f9fa;
+            text-align: center;
+            padding: 0.4rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 16.67%;
+        }
+
+        .comparison-table td {
+            padding: 0;
+            text-align: center;
+            width: 16.67%;
+        }
+
+        .comparison-video-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            background: #000;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .comparison-video-container:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .comparison-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .model-results-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Responsive design */
+        @media (max-width: 1024px) {
+            .editing-container {
+                grid-template-columns: 1fr 2fr;
+                gap: 3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                min-height: 100vh;
+                height: auto;
+                padding: 3rem 1rem 2rem;
+                padding-top: max(3rem, env(safe-area-inset-top, 20px) + 1.5rem);
+            }
+
+            .editing-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+            }
+
+            .hero-title {
+                font-size: clamp(1.8rem, 6vw, 3rem);
+                margin-bottom: 1.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .authors-section {
+                padding: 0 0.5rem;
+                margin-top: 1.5rem;
+            }
+
+            .authors {
+                gap: 0.3rem 1rem;
+                justify-content: center;
+            }
+
+            .author-block {
+                font-size: 0.9rem;
+            }
+
+            .author-affiliation {
+                font-size: 0.9rem;
+                margin-bottom: 2rem;
+            }
+
+            .nav-links {
+                gap: 0.75rem;
+                margin-top: 1.5rem;
+                padding: 0 1rem;
+            }
+
+            .nav-button {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.85rem;
+                min-width: auto;
+            }
+
+            .section-title {
+                font-size: 3rem;
+            }
+
+            .editing-type {
+                font-size: 1.8rem;
+            }
+
+            .videos-grid {
+                gap: 1rem;
+            }
+
+            .more-results-title {
+                font-size: 2.5rem;
+            }
+
+            .more-results-category-title {
+                font-size: 1.8rem;
+            }
+
+            .more-videos-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+
+            .two-col-videos-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .progress-indicator {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-section {
+                min-height: 100vh;
+                height: auto;
+                padding: 4rem 1rem 2rem;
+                justify-content: flex-start;
+                padding-top: max(4rem, env(safe-area-inset-top, 20px) + 2rem);
+            }
+
+            .hero-title {
+                font-size: 3rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .authors {
+                /* flex-direction: column; */
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .author-block {
+                font-size: 0.85rem;
+                text-align: center;
+            }
+
+            .nav-links {
+                flex-direction: row;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .nav-button {
+                width: 45%;
+                max-width: 280px;
+                justify-content: center;
+            }
+
+            .videos-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .more-results-section {
+                padding: 4rem 1rem;
+            }
+
+            .more-results-title {
+                font-size: 2rem;
+            }
+
+            .more-results-category-title {
+                font-size: 1.5rem;
+            }
+
+            .more-videos-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .two-col-videos-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .section-description {
+                font-size: 1rem;
+            }
+
+            .comparison-table {
+                border-spacing: 0.5rem;
+            }
+
+            .comparison-table th {
+                font-size: 1rem;
+                padding: 0.5rem;
+            }
+
+            .model-results-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 0 1rem;
+            }
+
+            .comparison-table-container {
+                padding: 0 1rem;
+                overflow-x: auto;
+            }
+
+            .comparison-table {
+                min-width: 800px;
+                border-spacing: 0.3rem;
+            }
+
+            .comparison-table th {
+                font-size: 0.8rem;
+                padding: 0.3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div>
+            <h1 class="hero-title">DITTO</h1>
+            <p class="hero-subtitle">Scaling Instruction-Based Video Editing with a High-Quality Synthetic Dataset</p>
+
+            <div class="authors-section">
+                <div class="authors">
+                    <span class="author-block">
+                        <a href="https://bqy.info/">Qingyan Bai</a><sup>1,2</sup>
+                    </span>
+                    <span class="author-block">
+                        <a href="https://github.com/qiuyu96">Qiuyu Wang</a><sup>2</sup>
+                    </span>
+                    <span class="author-block">
+                        <a href="https://ken-ouyang.github.io/">Hao Ouyang</a><sup>2</sup>
+                    </span>
+                    <span class="author-block">
+                        <a href="https://bruceyy.com/">Yue Yu</a><sup>1,2</sup>
+                    </span>
+                    <span class="author-block">
+                        <a href="https://scholar.google.com/citations?user=0uO4fzkAAAAJ&hl=zh-CN">Hanlin
+                            Wang</a><sup>1,2</sup>
+                    </span>
+                    <span class="author-block">
+                        <a href="https://encounter1997.github.io/">Wen Wang</a><sup>2,3</sup>
+                    </span>
+                    <span class="author-block">
+                        <a href="https://felixcheng97.github.io/">Ka Leong Cheng</a><sup>2</sup>
+                    </span>
+                    <span class="author-block">
+                        <a href="https://scholar.google.com/citations?user=dNhzCu4AAAAJ">Shuailei
+                            Ma</a><sup>2,4</sup>
+                    </span>
+                    <span class="author-block">
+                        <a href="https://zengyh1900.github.io/">Yanhong Zeng</a><sup>2</sup>
+                    </span>
+                    <span class="author-block">
+                        <a href="https://zliucz.github.io/">Zichen Liu</a><sup>1,2</sup>
+                    </span>
+                    <span class="author-block">
+                        <a href="https://justimyhxu.github.io/">Yinghao Xu</a><sup>2</sup>
+                    </span>
+                    <span class="author-block">
+                        <a href="https://shenyujun.github.io/">Yujun Shen</a><sup>2</sup>
+                    </span>
+                    <span class="author-block">
+                        <a href="https://cqf.io/">Qifeng Chen</a><sup>1</sup>
+                    </span>
+                </div>
+
+                <div class="author-affiliation">
+                    <span class="affiliation-text"><sup>1</sup>HKUST, <sup>2</sup>Ant Group, <sup>3</sup>Zhejiang
+                        University, <sup>4</sup>Northeastern University</span>
+                </div>
+
+                <div class="nav-links">
+                    <a class="nav-button" href="https://arxiv.org/abs/2510.15742" rel="noopener noreferrer">
+                        <span class="icon">📄</span>
+                        <span>Paper</span>
+                    </a>
+                    <a class="nav-button" href="https://github.com/EzioBy/Ditto" rel="noopener noreferrer">
+                        <span class="icon">💻</span>
+                        <span>Code</span>
+                    </a>
+                    <a class="nav-button" href="https://huggingface.co/QingyanBai/Ditto_models/tree/main" rel="noopener noreferrer">
+                        <span class="icon">🤗</span>
+                        <span>Models</span>
+                    </a>
+                    <a class="nav-button" href="https://huggingface.co/datasets/QingyanBai/Ditto-1M" rel="noopener noreferrer">
+                        <span class="icon">📊</span>
+                        <span>Dataset</span>
+                    </a>
+                    <a class="nav-button" href="https://huggingface.co/spaces/QingyanBai/Ditto" rel="noopener noreferrer">
+                        <span class="icon">🎮</span>
+                        <span>Demo</span>
+                    </a>
+                </div>
+
+                <div class="promo-video-section">
+                    <div class="promo-video-container">
+                        <video class="promo-video" controls>
+                            <source src="./ditto_model.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="promo-video-container">
+                        <video class="promo-video" controls>
+                            <source src="./ditto_dataset.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="promo-video-description">We highly recommend watching the video with sound on 💃</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Dataset Section Header -->
+    <section class="section-header dataset-header">
+        <div class="section-header-content">
+            <h2 class="section-title">Abstract</h2>
+            <p class="section-description" style="text-align: left;">
+                Instruction-based video editing promises to democratize content creation, yet its progress is severely
+                hampered by the scarcity of large-scale, high-quality training data. We introduce <em>Ditto</em>, a holistic
+                framework designed to tackle this fundamental challenge. At its heart, Ditto features a novel data
+                generation pipeline that fuses the creative diversity of a leading image editor with an in-context video
+                generator, overcoming the limited scope of existing models. To make this process viable, our framework
+                resolves the prohibitive cost-quality trade-off by employing an efficient, distilled model architecture
+                augmented by a temporal enhancer, which simultaneously reduces computational overhead and improves
+                temporal coherence. Finally, to achieve full scalability, this entire pipeline is driven by an
+                intelligent agent that crafts diverse instructions and rigorously filters the output, ensuring quality
+                control at scale. Using this framework, we invested over 12,000 GPU-days to build <em>Ditto-1M</em>, a new
+                dataset of one million high-fidelity video editing examples. We trained our model, <em>Editto</em>, on Ditto-1M
+                with a curriculum learning strategy. The results demonstrate superior instruction-following ability and
+                establish a new state-of-the-art in instruction-based video editing.
+            </p>
+        </div>
+    </section>
+
+    <!-- Dataset Section Header -->
+    <section class="section-header dataset-header">
+        <div class="section-header-content">
+            <h2 class="section-title">Dataset: Ditto-1M</h2>
+            <p class="section-description">
+                A high-quality synthetic dataset for instruction-based video editing, featuring diverse scenarios
+                and comprehensive editing instructions across global and local transformations.
+            </p>
+        </div>
+    </section>
+
+    <!-- Progress Indicator -->
+    <div class="progress-indicator">
+        <div class="progress-dot" data-section="0"></div>
+        <div class="progress-dot" data-section="1"></div>
+        <div class="progress-dot" data-section="2"></div>
+        <div class="progress-dot" data-section="3"></div>
+        <div class="progress-dot" data-section="4"></div>
+        <div class="progress-dot" data-section="5"></div>
+    </div>
+
+    <!-- Global Editing Section -->
+    <section class="editing-section" data-section="1">
+        <div class="section-background"></div>
+        <div class="editing-container">
+            <div class="editing-content">
+                <h2 class="editing-type">Global Editing</h2>
+                <p class="editing-description">
+                    Global editing transforms the entire video with comprehensive changes that affect every frame.
+                    This kind of editing applies consistent modifications across the complete temporal sequence,
+                    enabling dramatic style transfers, color grading, and atmospheric adjustments that
+                    maintain visual coherence throughout the entire video.
+                </p>
+            </div>
+            <div class="videos-grid">
+                <div class="video-container">
+                    <div class="video-slider" data-video-pair="global-1">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="video-container">
+                    <div class="video-slider" data-video-pair="global-2">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="video-container">
+                    <div class="video-slider" data-video-pair="global-3">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="video-container">
+                    <div class="video-slider" data-video-pair="global-4">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Local Editing Section -->
+    <section class="editing-section" data-section="2">
+        <div class="section-background"></div>
+        <div class="editing-container">
+            <div class="editing-content">
+                <h2 class="editing-type">Local Editing</h2>
+                <p class="editing-description">
+                    Local editing focuses on specific regions or objects within the video, applying precise
+                    modifications to targeted areas while preserving the surrounding content. This kind
+                    of editing enables selective enhancement, object replacement, and regional adjustments that maintain
+                    the integrity of the overall composition.
+                </p>
+            </div>
+            <div class="videos-grid">
+                <div class="video-container">
+                    <div class="video-slider" data-video-pair="local-1">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="video-container">
+                    <div class="video-slider" data-video-pair="local-2">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="video-container">
+                    <div class="video-slider" data-video-pair="local-3">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="video-container">
+                    <div class="video-slider" data-video-pair="local-4">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- More Dataset Samples Section -->
+    <section class="more-results-section">
+        <div class="more-results-container">
+            <h2 class="more-results-title">More Dataset Samples</h2>
+
+            <div class="more-results-grid">
+                <!-- Global More Dataset Samples -->
+                <div class="more-results-category">
+                    <!-- <h3 class="more-results-category-title">Global Editing</h3> -->
+                    <div class="more-videos-grid">
+                        <div class="more-video-container">
+                            <div class="video-slider" data-video-pair="more-global-2" data-static="true">
+                                <video class="video-before" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <video class="video-after" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <div class="slider-handle"></div>
+                                <div class="video-prompt"></div>
+                                <div class="video-prompt"></div>
+                            </div>
+                        </div>
+                        <div class="more-video-container">
+                            <div class="video-slider" data-video-pair="more-global-3" data-static="true">
+                                <video class="video-before" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <video class="video-after" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <div class="slider-handle"></div>
+                                <div class="video-prompt"></div>
+                                <div class="video-prompt"></div>
+                            </div>
+                        </div>
+                        <div class="more-video-container">
+                            <div class="video-slider" data-video-pair="more-global-4" data-static="true">
+                                <video class="video-before" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <video class="video-after" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <div class="slider-handle"></div>
+                                <div class="video-prompt"></div>
+                                <div class="video-prompt"></div>
+                            </div>
+                        </div>
+                        <div class="more-video-container">
+                            <div class="video-slider" data-video-pair="more-global-5" data-static="true">
+                                <video class="video-before" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <video class="video-after" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <div class="slider-handle"></div>
+                                <div class="video-prompt"></div>
+                                <div class="video-prompt"></div>
+                            </div>
+                        </div>
+                        <div class="more-video-container">
+                            <div class="video-slider" data-video-pair="more-global-6" data-static="true">
+                                <video class="video-before" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <video class="video-after" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <div class="slider-handle"></div>
+                                <div class="video-prompt"></div>
+                                <div class="video-prompt"></div>
+                            </div>
+                        </div>
+                        <div class="more-video-container">
+                            <div class="video-slider" data-video-pair="more-global-8" data-static="true">
+                                <video class="video-before" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <video class="video-after" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <div class="slider-handle"></div>
+                                <div class="video-prompt"></div>
+                                <div class="video-prompt"></div>
+                            </div>
+                        </div>
+                        <div class="more-video-container">
+                            <div class="video-slider" data-video-pair="more-global-9" data-static="true">
+                                <video class="video-before" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <video class="video-after" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <div class="slider-handle"></div>
+                                <div class="video-prompt"></div>
+                                <div class="video-prompt"></div>
+                            </div>
+                        </div>
+                        <div class="more-video-container">
+                            <div class="video-slider" data-video-pair="more-global-10" data-static="true">
+                                <video class="video-before" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <video class="video-after" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <div class="slider-handle"></div>
+                                <div class="video-prompt"></div>
+                                <div class="video-prompt"></div>
+                            </div>
+                        </div>
+                        <div class="more-video-container">
+                            <div class="video-slider" data-video-pair="more-global-11" data-static="true">
+                                <video class="video-before" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <video class="video-after" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <div class="slider-handle"></div>
+                                <div class="video-prompt"></div>
+                                <div class="video-prompt"></div>
+                            </div>
+                        </div>
+                        <div class="more-video-container">
+                            <div class="video-slider" data-video-pair="more-global-12" data-static="true">
+                                <video class="video-before" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <video class="video-after" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <div class="slider-handle"></div>
+                                <div class="video-prompt"></div>
+                                <div class="video-prompt"></div>
+                            </div>
+                        </div>
+                        <div class="more-video-container">
+                            <div class="video-slider" data-video-pair="more-local-1" data-static="true">
+                                <video class="video-before" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <video class="video-after" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <div class="slider-handle"></div>
+                                <div class="video-prompt"></div>
+                                <div class="video-prompt"></div>
+                            </div>
+                        </div>
+                        <div class="more-video-container">
+                            <div class="video-slider" data-video-pair="more-local-2" data-static="true">
+                                <video class="video-before" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <video class="video-after" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <div class="slider-handle"></div>
+                                <div class="video-prompt"></div>
+                                <div class="video-prompt"></div>
+                            </div>
+                        </div>
+                        <div class="more-video-container">
+                            <div class="video-slider" data-video-pair="more-local-3" data-static="true">
+                                <video class="video-before" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <video class="video-after" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <div class="slider-handle"></div>
+                                <div class="video-prompt"></div>
+                                <div class="video-prompt"></div>
+                            </div>
+                        </div>
+                        <div class="more-video-container">
+                            <div class="video-slider" data-video-pair="more-local-4" data-static="true">
+                                <video class="video-before" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <video class="video-after" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <div class="slider-handle"></div>
+                                <div class="video-prompt"></div>
+                                <div class="video-prompt"></div>
+                            </div>
+                        </div>
+                        <div class="more-video-container">
+                            <div class="video-slider" data-video-pair="more-local-5" data-static="true">
+                                <video class="video-before" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <video class="video-after" muted loop>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <div class="slider-handle"></div>
+                                <div class="video-prompt"></div>
+                                <div class="video-prompt"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="more-videos-grid">
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Model Section Header -->
+    <section class="section-header model-header">
+        <div class="section-header-content">
+            <h2 class="section-title">Model: Editto</h2>
+            <p class="section-description">
+                An instruction-based video editing model trained on the Ditto-1M dataset, demonstrating superior
+                performance across diverse editing scenarios and outperforming existing methods.
+            </p>
+        </div>
+    </section>
+
+    <!-- Model Results Section -->
+    <section class="more-results-section" data-section="5">
+        <div class="section-background"></div>
+        <div>
+            <div class="editing-content" style="text-align: center; grid-column: 1 / -1; margin-bottom: 2rem;">
+                <h2 class="editing-type">Model Results</h2>
+                <p class="editing-description">
+                    Showcasing the capabilities of our Editto model across various editing scenarios,
+                    from global style transfers to precise local modifications.
+                </p>
+            </div>
+            <div class="more-videos-grid">
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-global-1" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-global-2" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-global-3" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-global-7" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-global-8" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-global-9" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-global-13" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-global-14" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-global-15" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-global-16" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-local-1" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-local-2" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-local-3" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-local-4" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-local-5" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Model Comparison Section -->
+    <!-- <section class="editing-section" data-section="4">
+        <div class="section-background"></div>
+        <div class="comparison-table-container">
+            <h3 class="editing-type" style="text-align: center; margin-bottom: 3rem;">Qualitative Comparison</h3>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>TokenFlow</th>
+                        <th>InsV2V</th>
+                        <th>InsViE</th>
+                        <th>Gen4-Aleph</th>
+                        <th>Ours</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-scene="01c7e2">
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/01c7e2/source.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/01c7e2/tf.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/01c7e2/iv.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/01c7e2/ive.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/01c7e2/gen4.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/01c7e2/ours.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-scene="Bullet">
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/Bullet/source.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/Bullet/tf.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/Bullet/iv.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/Bullet/ive.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/Bullet/gen4.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/Bullet/ours.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-scene="Scene02">
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/Scene02/source.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/Scene02/tf.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/Scene02/iv.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/Scene02/ive.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/Scene02/gen4.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comparison-video-container">
+                                <video loading="lazy" class="comparison-video" muted loop>
+                                    <source src="model/qualitative_comparison/Scene02/ours.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section> -->
+
+    <!-- Application Examples Section -->
+    <section class="more-results-section" data-section="5">
+        <div class="section-background"></div>
+        <div>
+            <div class="editing-content" style="text-align: center; grid-column: 1 / -1; margin-bottom: 2rem;">
+                <h2 class="editing-type">Additional Application</h2>
+                <p class="editing-description">
+                    We showcase the synthetic-to-real (sim2real) capability benefited from our data by
+                    training the model to map the stylized videos in our dataset back to their original, real-world
+                    source videos.
+                </p>
+            </div>
+            <div class="two-col-videos-grid">
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-sim2real-1" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="model-sim2real-2" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Effectiveness of Denoising Enhancer Section -->
+    <section class="more-results-section" data-section="5">
+        <div class="section-background"></div>
+        <div>
+            <div class="editing-content" style="text-align: center; grid-column: 1 / -1; margin-bottom: 2rem;">
+                <h2 class="editing-type">Effectiveness of Denoising Enhancer</h2>
+                <p class="editing-description">
+                    Here we demonstrate the effectiveness of denoising enhancer where the raw edited video is provided
+                    on the left, and the enhanced one is put on the right (please consider zooming in to see the
+                    details). The denoising enhancer can effectively mitigate the generation quality degradation introduced by quantized and distilled models at a low cost.
+                </p>
+            </div>
+            <div class="one-col-video-grid" style="margin-bottom: 1rem;">
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="enhancing-1" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="one-col-video-grid">
+                <div class="more-video-container">
+                    <div class="video-slider" data-video-pair="enhancing-2" data-static="true">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Video configuration - easy to edit video paths
+        const VIDEO_CONFIG = {
+            global: {
+                'global-1': { before: 'dataset/videos/33_freeform/7571115_antoni_shkraba_studio.mp4', after: 'dataset/videos/33_freeform/7571115_antoni_shkraba_studio_1.mp4', prompt: 'Evoke the atmosphere of a dark, mystical sorceress with glowing green eyes, adorned in ornate black and gold armor, and wielding ethereal green energy, using a photorealistic fantasy art style.' },
+                'global-2': { before: 'dataset/videos/17_global/8410085_mikhail_nilov.mp4', after: 'dataset/videos/17_global/8410085_mikhail_nilov_2.mp4', prompt: 'Render the subject as a classical sculpture carved from a single block of pristine white marble.' },
+                'global-3': { before: 'dataset/videos/15_global/10634858_ron_lach.mp4', after: 'dataset/videos/15_global/10634858_ron_lach_1.mp4', prompt: 'Imitate the look of the 3D Chibi style.' },
+                'global-4': { before: 'dataset/videos/7_global/55a34cd9561957cd3e62c65f7758e6d8.mp4', after: 'dataset/videos/7_global/55a34cd9561957cd3e62c65f7758e6d8_2.mp4', prompt: 'Transform the scene into a whimsical pastry dream world where the cake is a floating island, the frosting is a river of cream, and the chocolate drizzle is a glowing path.' }
+            },
+            local: {
+                'local-1': { before: 'dataset/videos/21_local/9add337e4de179aee0f3f87ecf77581c_0.mp4', after: 'dataset/videos/21_local/9add337e4de179aee0f3f87ecf77581c_3.mp4', prompt: 'Add a faint, ghostly silhouette of a deer standing in the mist beyond the trees.' },
+                'local-2': { before: 'dataset/videos/28_local/3761652_sound_on_0.mp4', after: 'dataset/videos/28_local/3761652_sound_on_1.mp4', prompt: 'Replace the yellow tank top with a pale mint green one with a ruffled neckline.' },
+                'local-3': { before: 'dataset/videos/29_local/8101859_koolshooters_0.mp4', after: 'dataset/videos/29_local/8101859_koolshooters_3.mp4', prompt: 'Add a glowing vintage streetlamp casting a warm yellow hue on the pavement near the couple.' },
+                'local-4': { before: 'dataset/videos/27_local/6613013_pavel_danilyuk_0.mp4', after: 'dataset/videos/27_local/6613013_pavel_danilyuk_3.mp4', prompt: 'Introduce a faint aurora-like glow in the sky above the treetops.' }
+            },
+            more: {
+                'more-global-1': { before: 'dataset/videos/6_global/8890667_lara_jameson.mp4', after: 'dataset/videos/6_global/8890667_lara_jameson_2.mp4', prompt: 'Make it sculptured with slime.' },
+                'more-global-2': { before: 'dataset/videos/32_freeform/8195664_kampus_production.mp4', after: 'dataset/videos/32_freeform/8195664_kampus_production_1.mp4', prompt: 'Reimagine it in the art of a dark, mystical warrior with glowing blue eyes, adorned in ornate armor and a horned helmet, holding a glowing heart, rendered in a highly detailed, photorealistic fantasy style.' },
+                'more-global-3': { before: 'dataset/videos/34_freeform/30424446_lazarus_ziridis.mp4', after: 'dataset/videos/34_freeform/30424446_lazarus_ziridis_2.mp4', prompt: 'Give it the characteristics of a girl with long blonde hair, wearing a purple dress and white gloves, depicted in a vibrant, anime-inspired artistic style.' },
+                'more-global-4': { before: 'dataset/videos/13_global/10040711_los_muertos_crew.mp4', after: 'dataset/videos/13_global/10040711_los_muertos_crew_2.mp4', prompt: 'Transform the scene into a surreal, floating office in the clouds where the whiteboard is a mirror reflecting alternate timelines, and the man’s gestures create ripples in time.' },
+                'more-global-5': { before: 'dataset/videos/42_freeform/5121704_arthouse_studio.mp4', after: 'dataset/videos/42_freeform/5121704_arthouse_studio_3.mp4', prompt: 'Bring it to life as a mysterious girl with long silver hair, glowing red eyes, and intricate traditional attire, rendered in a highly detailed, anime-inspired artistic style.' },
+                'more-global-6': { before: 'dataset/videos/16_global/5243800_roberto_hund.mp4', after: 'dataset/videos/16_global/5243800_roberto_hund_1.mp4', prompt: 'Infuse with the visual elements of the Macaron style.' },
+                'more-global-7': { before: 'dataset/videos/4_global/10384147_ron_lach.mp4', after: 'dataset/videos/4_global/10384147_ron_lach_2.mp4', prompt: 'Make it a Pixel Art.' },
+                'more-global-8': { before: 'dataset/videos/48_freeform/7658507_cottonbro_studio.mp4', after: 'dataset/videos/48_freeform/7658507_cottonbro_studio_3.mp4', prompt: 'Personify it as a futuristic robot with glowing red eyes, wearing a bright yellow trench coat, a tall yellow hat, and equipped with high-tech gadgets, rendered in a detailed anime-style illustration.' },
+                'more-global-9': { before: 'dataset/videos/12_global/7150154_vlada_karpovich.mp4', after: 'dataset/videos/12_global/7150154_vlada_karpovich_1.mp4', prompt: 'Transform the video into a storybook illustration style with soft watercolor backgrounds, delicate ink outlines, and subtle animation effects like fluttering paper pages.' },
+                'more-global-10': { before: 'dataset/videos/40_freeform/7583739_mikhail_nilov.mp4', after: 'dataset/videos/40_freeform/7583739_mikhail_nilov_2.mp4', prompt: 'Bring it to life as a regal woman adorned in ornate, traditional attire featuring intricate gold embroidery, flowing red and white fabrics, and elaborate jewelry, rendered in a highly detailed, photorealistic style.' },
+                'more-global-11': { before: 'dataset/videos/46_freeform/7236197_cottonbro_studio.mp4', after: 'dataset/videos/46_freeform/7236197_cottonbro_studio_1.mp4', prompt: 'Give it the characteristics of a knight clad in dark, textured armor with a high collar, wearing gloves and boots, depicted in a dramatic, comic book-style illustration with bold lines and a moody color palette.' },
+                'more-global-12': { before: 'dataset/videos/39_freeform/10388844_ron_lach.mp4', after: 'dataset/videos/39_freeform/10388844_ron_lach_1.mp4', prompt: 'Recreate it as a photorealistic depiction of a young woman with tousled blonde hair, wearing an orange jacket, and featuring a vibrant, high-contrast color palette with dynamic lighting effects.' },
+                'more-local-1': { before: 'dataset/videos/19_local/7560936_shvets_production_0.mp4', after: 'dataset/videos/19_local/7560936_shvets_production_2.mp4', prompt: 'Alter the smooth, undulating walls to have subtle glowing lines resembling neural pathways.' },
+                'more-local-2': { before: 'dataset/videos/24_local/8e02c78ad5c0581043d3244a9e463c5b_0.mp4', after: 'dataset/videos/24_local/8e02c78ad5c0581043d3244a9e463c5b_2.mp4', prompt: 'Change the bird’s brown plumage to iridescent blue and green feathers with a white underbelly.' },
+                'more-local-3': { before: 'dataset/videos/30_local/85a4becf00bfcbc6f8f4b982ee95244a_0.mp4', after: 'dataset/videos/30_local/85a4becf00bfcbc6f8f4b982ee95244a_2.mp4', prompt: 'Replace the black dog with a white fox sitting calmly beside them.' },
+                'more-local-4': { before: 'dataset/videos/25_local/8052353_rdne_stock_project_0.mp4', after: 'dataset/videos/25_local/8052353_rdne_stock_project_2.mp4', prompt: 'Change the background to a sun-drenched meadow with distant hills and a few wildflowers swaying in the wind.' },
+                'more-local-5': { before: 'dataset/videos/20_local/5039714_cottonbro_studio_0.mp4', after: 'dataset/videos/20_local/5039714_cottonbro_studio_1.mp4', prompt: 'Replace the pink and white patterned jacket with a black leather jacket with silver zippers.' },
+                'more-local-6': { before: 'dataset/videos/23_local/8153b5a694bf353215b7886fe26a5132_0.mp4', after: 'dataset/videos/23_local/8153b5a694bf353215b7886fe26a5132_3.mp4', prompt: 'Add a small, hidden nest with two tiny puffin chicks peeking out from inside.' },
+            },
+            model: {
+                'model-global-1': { before: 'model/videos/global_10/source.mp4', after: 'model/videos/global_10/edited.mp4', prompt: 'Make it sculptured with silver.' },
+                'model-global-2': { before: 'model/videos/global_11/source.mp4', after: 'model/videos/global_11/edited.mp4', prompt: 'Make it the style of Archer.' },
+                'model-global-3': { before: 'model/videos/global_12/source.mp4', after: 'model/videos/global_12/edited.mp4', prompt: 'Turn it into the Origami style.' },
+                'model-global-7': { before: 'model/videos/global_6/0fb2c874ffed14d5f23a6c4a6b1b87dc-split_0_to_141-clip_00000000_00.mp4', after: 'model/videos/global_6/Make_it_Pixar_style..mp4', prompt: 'Make it Pixar style.' },
+                'model-global-8': { before: 'model/videos/global_7/2502afb4cd6bd077611046b1c7a89dbc-split_0_to_257-clip_00000001_00.mp4', after: 'model/videos/global_7/Make_it_Steampunk_style_(mechanical_with_gears,_pipes_and_brass_details)..mp4', prompt: 'Make it Steampunk style (mechanical with gears, pipes and brass details).' },
+                'model-global-9': { before: 'model/videos/global_8/lisa_2.mp4', after: 'model/videos/global_8/Recreate_it_as_the_Rick_Morty_style..mp4', prompt: 'Recreate it as the Rick Morty style.' },
+                'model-global-13': { before: 'model/videos/global_9/source.mp4', after: 'model/videos/global_9/edited.mp4', prompt: 'Make it a pencil sketch style.' },
+                'model-global-14': { before: 'model/videos/global_13/source.mp4', after: 'model/videos/global_13/edited.mp4', prompt: 'Overlay the video with an intense fire effect.' },
+                'model-global-15': { before: 'model/videos/global_14/source.mp4', after: 'model/videos/global_14/edited.mp4', prompt: 'Cast it as the 3D Chibi style.' },
+                'model-global-16': { before: 'model/videos/global_15/source.mp4', after: 'model/videos/global_15/edited.mp4', prompt: 'Make it Minimalism art style.' },
+                'model-local-1': { before: 'model/videos/local_0/source.mp4', after: 'model/videos/local_0/edited.mp4', prompt: 'Turn the cat into a black cat' },
+                'model-local-2': { before: 'model/videos/local_1/source.mp4', after: 'model/videos/local_1/edited.mp4', prompt: 'Add a streetlight on the wall.' },
+                'model-local-3': { before: 'model/videos/local_2/source.mp4', after: 'model/videos/local_2/edited.mp4', prompt: 'Add some light to the woman\'s face.' },
+                'model-local-4': { before: 'model/videos/local_3/source.mp4', after: 'model/videos/local_3/ours.mp4', prompt: 'Replace the arms with robot arms.' },
+                'model-local-5': { before: 'model/videos/local_4/source.mp4', after: 'model/videos/local_4/edited.mp4', prompt: 'Change his shirt to a shining cloth.' },
+                'model-sim2real-1': { before: 'model/sim2real/boy_girl/0source.mp4', after: 'model/sim2real/boy_girl/ours.mp4', prompt: ' ' },
+                'model-sim2real-2': { before: 'model/sim2real/girl/0source.mp4', after: 'model/sim2real/girl/ours.mp4', prompt: ' ' },
+            },
+            enhancing: {
+                'enhancing-1': { before: 'enhancing/10aa2747f6dcefaca1393acc1c2fef9f_2_f3_b3_before.mp4', after: 'enhancing/10aa2747f6dcefaca1393acc1c2fef9f_2_f3_b3_after.mp4', prompt: ' ' },
+                'enhancing-2': { before: 'enhancing/099d4bb32a53860c8b8c1aaf41339f34_2_f3_b3_before.mp4', after: 'enhancing/099d4bb32a53860c8b8c1aaf41339f34_2_f3_b3_after.mp4', prompt: ' ' }
+            }
+        };
+
+        // Initialize video sliders and scroll interactions
+        class VideoSliderController {
+            constructor() {
+                this.sliders = document.querySelectorAll('.video-slider');
+                this.progressDots = document.querySelectorAll('.progress-dot');
+                this.sections = document.querySelectorAll('.editing-section');
+                this.init();
+            }
+
+            init() {
+                this.loadVideosFromConfig();
+                this.loadPrompts();
+                this.setupVideoSliders();
+                this.initializeStaticSliders();
+                this.setupScrollHandler();
+                this.setupHoverHandlers();
+                this.setupComparisonTable();
+                this.playAllVideos();
+            }
+
+            loadVideosFromConfig() {
+                // Load editing videos
+                this.sliders.forEach(slider => {
+                    const videoPair = slider.getAttribute('data-video-pair');
+                    const beforeVideo = slider.querySelector('.video-before source');
+                    const afterVideo = slider.querySelector('.video-after source');
+
+                    // Find the config for this video pair
+                    let config = null;
+                    if (videoPair.startsWith('global-')) {
+                        config = VIDEO_CONFIG.global[videoPair];
+                    } else if (videoPair.startsWith('local-')) {
+                        config = VIDEO_CONFIG.local[videoPair];
+                    } else if (videoPair.startsWith('more-')) {
+                        config = VIDEO_CONFIG.more[videoPair];
+                    } else if (videoPair.startsWith('model-')) {
+                        config = VIDEO_CONFIG.model[videoPair];
+                    } else if (videoPair.startsWith('enhancing-')) {
+                        config = VIDEO_CONFIG.enhancing[videoPair];
+                    }
+
+                    if (config && beforeVideo && afterVideo) {
+                        beforeVideo.src = config.before;
+                        afterVideo.src = config.after;
+                        beforeVideo.parentElement.load();
+                        afterVideo.parentElement.load();
+                    }
+                });
+            }
+
+            setupVideoSliders() {
+                this.sliders.forEach(slider => {
+                    const beforeVideo = slider.querySelector('.video-before');
+                    const afterVideo = slider.querySelector('.video-after');
+                    const handle = slider.querySelector('.slider-handle');
+
+                    // Ensure videos are ready
+                    beforeVideo.addEventListener('loadeddata', () => {
+                        beforeVideo.currentTime = 0;
+                    });
+
+                    afterVideo.addEventListener('loadeddata', () => {
+                        afterVideo.currentTime = 0;
+                    });
+                });
+            }
+
+            initializeStaticSliders() {
+                // Initialize static sliders (more-video-containers) with correct transform positioning
+                this.sliders.forEach(slider => {
+                    const isStatic = slider.hasAttribute('data-static');
+                    const isMoreVideoContainer = slider.closest('.more-video-container');
+
+                    if (isStatic && isMoreVideoContainer) {
+                        // Set initial position to 70% using transform
+                        this.updateSlider(slider, 0.5);
+                    }
+                });
+            }
+
+            setupScrollHandler() {
+                let ticking = false;
+                let lastScrollTime = 0;
+
+                window.addEventListener('scroll', () => {
+                    if (!ticking) {
+                        requestAnimationFrame(() => {
+                            const now = performance.now();
+                            // Throttle scroll updates to ~30fps for better performance
+                            if (now - lastScrollTime >= 33) {
+                                this.handleScroll();
+                                lastScrollTime = now;
+                            }
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                });
+            }
+
+            handleScroll() {
+                const scrollY = window.scrollY;
+                const windowHeight = window.innerHeight;
+
+                // Update progress indicators
+                this.updateProgressIndicators(scrollY, windowHeight);
+
+                // Update video sliders based on scroll position (only non-static ones)
+                this.sections.forEach((section, index) => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.offsetHeight;
+                    const sectionCenter = sectionTop + sectionHeight / 2;
+
+                    // Calculate scroll progress within this section
+                    const scrollProgress = Math.max(0, Math.min(1,
+                        (scrollY + windowHeight / 2 - sectionTop) / sectionHeight
+                    ));
+
+                    // Update all sliders in this section (for 2x2 grid), but skip static ones
+                    const sliders = section.querySelectorAll('.video-slider:not([data-static])');
+                    sliders.forEach(slider => {
+                        this.updateSlider(slider, scrollProgress);
+                    });
+                });
+            }
+
+            updateProgressIndicators(scrollY, windowHeight) {
+                const totalHeight = document.documentElement.scrollHeight - windowHeight;
+                const scrollProgress = scrollY / totalHeight;
+
+                this.progressDots.forEach((dot, index) => {
+                    const sectionProgress = index / (this.progressDots.length - 1);
+                    if (scrollProgress >= sectionProgress - 0.1 && scrollProgress <= sectionProgress + 0.1) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+
+            updateSlider(slider, progress) {
+                const afterVideo = slider.querySelector('.video-after');
+                const handle = slider.querySelector('.slider-handle');
+
+                // Smooth progress curve
+                const smoothProgress = this.easeInOutCubic(progress);
+                const percentage = Math.max(0, Math.min(100, smoothProgress * 100));
+
+                // Use transform for handle positioning (better performance than changing left)
+                // Calculate the actual pixel position to match the old left% behavior
+                const containerWidth = slider.offsetWidth;
+                const pixelPosition = (percentage / 100) * containerWidth;
+                handle.style.transform = `translateX(${pixelPosition}px)`;
+
+                // Update clip-path for reveal effect - use will-change for optimization
+                if (!afterVideo.style.willChange) {
+                    afterVideo.style.willChange = 'clip-path';
+                }
+                afterVideo.style.clipPath = `inset(0 ${100 - percentage}% 0 0)`;
+            }
+
+            easeInOutCubic(t) {
+                return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+            }
+
+            loadPrompts() {
+                // Load text prompts for each video directly from config
+                this.sliders.forEach((slider) => {
+                    const videoPair = slider.getAttribute('data-video-pair');
+                    const promptElement = slider.querySelector('.video-prompt');
+
+                    if (promptElement && videoPair) {
+                        let config = null;
+
+                        if (videoPair.startsWith('global-')) {
+                            config = VIDEO_CONFIG.global[videoPair];
+                        } else if (videoPair.startsWith('local-')) {
+                            config = VIDEO_CONFIG.local[videoPair];
+                        } else if (videoPair.startsWith('more-')) {
+                            config = VIDEO_CONFIG.more[videoPair];
+                        } else if (videoPair.startsWith('model-')) {
+                            config = VIDEO_CONFIG.model[videoPair];
+                        } else if (videoPair.startsWith('enhancing-')) {
+                            config = VIDEO_CONFIG.enhancing[videoPair];
+                        }
+
+                        if (config && config.prompt) {
+                            promptElement.textContent = config.prompt;
+                        } else {
+                            promptElement.textContent = 'Prompt not available';
+                        }
+                    }
+                });
+            }
+
+            setupHoverHandlers() {
+                // Add hover-based slider control
+                this.sliders.forEach(slider => {
+                    const container = slider.closest('.video-container, .more-video-container');
+                    const handle = slider.querySelector('.slider-handle');
+                    let isHovering = false;
+                    let isTouching = false;
+                    let promptVisible = false;
+                    let animationFrame = null;
+                    let cachedRect = null;
+                    let lastUpdateTime = 0;
+
+                    const getProgressFromX = (x, rect) => {
+                        return Math.max(0, Math.min(1, (x - rect.left) / rect.width));
+                    };
+
+                    // Cache container rect and update periodically
+                    const updateCachedRect = () => {
+                        cachedRect = container.getBoundingClientRect();
+                    };
+
+                    // Toggle prompt visibility on mobile
+                    const togglePrompt = () => {
+                        promptVisible = !promptVisible;
+                        if (promptVisible) {
+                            container.classList.add('show-prompt');
+                        } else {
+                            container.classList.remove('show-prompt');
+                        }
+                    };
+
+                    // Mouse hover events for desktop
+                    const handleMouseEnter = () => {
+                        isHovering = true;
+                        container.style.cursor = 'crosshair';
+                        updateCachedRect(); // Cache rect on enter
+                    };
+
+                    const handleMouseMove = (e) => {
+                        if (!isHovering) return;
+
+                        // Throttle updates using requestAnimationFrame
+                        if (animationFrame) {
+                            cancelAnimationFrame(animationFrame);
+                        }
+
+                        animationFrame = requestAnimationFrame(() => {
+                            const now = performance.now();
+
+                            // Additional throttling - limit to ~60fps
+                            if (now - lastUpdateTime < 16) {
+                                return;
+                            }
+
+                            // Use cached rect or update if stale
+                            const rect = cachedRect || container.getBoundingClientRect();
+                            const progress = getProgressFromX(e.clientX, rect);
+                            this.updateSlider(slider, progress);
+
+                            lastUpdateTime = now;
+                        });
+                    };
+
+                    const handleMouseLeave = () => {
+                        isHovering = false;
+                        container.style.cursor = 'default';
+                        cachedRect = null; // Clear cache
+                        if (animationFrame) {
+                            cancelAnimationFrame(animationFrame);
+                            animationFrame = null;
+                        }
+                        // Optionally reset to original position or keep current position
+                        // For better UX, we'll keep the current position when mouse leaves
+                    };
+
+                    // Click/tap event for mobile prompt toggle
+                    const handleClick = (e) => {
+                        // Only handle click if not dragging slider
+                        if (!isTouching) {
+                            togglePrompt();
+                        }
+                    };
+                    console.log(container)
+                    // Mouse events
+                    container.addEventListener('mouseenter', handleMouseEnter);
+                    container.addEventListener('mousemove', handleMouseMove);
+                    container.addEventListener('mouseleave', handleMouseLeave);
+                    container.addEventListener('click', handleClick);
+
+                    // Touch events for mobile - keep drag functionality for touch devices
+                    let startX = 0;
+                    let startProgress = 0;
+
+                    const handleTouchStart = (e) => {
+                        isTouching = true;
+                        const rect = container.getBoundingClientRect();
+                        const touch = e.touches[0];
+                        startX = touch.clientX;
+                        startProgress = getProgressFromX(touch.clientX, rect);
+
+                        // Only update slider for non-static videos or if user is clearly trying to drag
+                        const isStatic = slider.hasAttribute('data-static');
+                        if (!isStatic) {
+                            this.updateSlider(slider, startProgress);
+                            e.preventDefault();
+                        }
+                    };
+
+                    const handleTouchMove = (e) => {
+                        if (!isTouching) return;
+
+                        const rect = container.getBoundingClientRect();
+                        const touch = e.touches[0];
+                        const progress = getProgressFromX(touch.clientX, rect);
+
+                        // Check if user is dragging significantly
+                        const dragDistance = Math.abs(touch.clientX - startX);
+                        const isStatic = slider.hasAttribute('data-static');
+
+                        if (!isStatic || dragDistance > 20) {
+                            this.updateSlider(slider, progress);
+                            e.preventDefault();
+                        }
+                    };
+
+                    const handleTouchEnd = (e) => {
+                        const touch = e.changedTouches[0];
+                        const dragDistance = Math.abs(touch.clientX - startX);
+                        const isStatic = slider.hasAttribute('data-static');
+
+                        // If it was a tap (small drag distance) on static video, toggle prompt
+                        if (isStatic && dragDistance < 20) {
+                            togglePrompt();
+                        }
+
+                        isTouching = false;
+                    };
+
+                    container.addEventListener('touchstart', handleTouchStart, { passive: false });
+                    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+                    container.addEventListener('touchend', handleTouchEnd);
+                });
+            }
+
+            playAllVideos() {
+                // Start playing all videos
+                const allVideos = document.querySelectorAll('video');
+                allVideos.forEach(video => {
+                    video.play().catch(e => {
+                        // Handle autoplay restrictions
+                        console.log('Autoplay prevented for video:', e);
+                    });
+                });
+            }
+
+            setupComparisonTable() {
+                // Add hover effects for comparison table videos
+                const comparisonVideos = document.querySelectorAll('.comparison-video');
+                comparisonVideos.forEach(video => {
+                    const container = video.closest('.comparison-video-container');
+
+                    container.addEventListener('mouseenter', () => {
+                        video.play().catch(e => {
+                            console.log('Could not play comparison video:', e);
+                        });
+                    });
+
+                    container.addEventListener('mouseleave', () => {
+                        video.pause();
+                        video.currentTime = 0;
+                    });
+                });
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new VideoSliderController();
+
+            // Hide prompts when clicking outside video containers
+            document.addEventListener('click', (e) => {
+                const videoContainers = document.querySelectorAll('.video-container, .more-video-container');
+                const clickedContainer = e.target.closest('.video-container, .more-video-container');
+
+                videoContainers.forEach(container => {
+                    if (container !== clickedContainer) {
+                        container.classList.remove('show-prompt');
+                    }
+                });
+            });
+        });
+
+        // Handle visibility change to pause/resume videos
+        document.addEventListener('visibilitychange', () => {
+            const videos = document.querySelectorAll('video');
+            if (document.hidden) {
+                videos.forEach(video => video.pause());
+            } else {
+                videos.forEach(video => video.play().catch(e => { }));
+            }
+        });
+    </script>
+</body>
+
+</html>

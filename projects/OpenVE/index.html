@@ -2781,14 +2781,20 @@
 
                         if (videoPair.startsWith('globalstyle-')) {
                             config = VIDEO_CONFIG.globalstyle[videoPair];
-                        } else if (videoPair.startsWith('local-')) {
-                            config = VIDEO_CONFIG.local[videoPair];
-                        } else if (videoPair.startsWith('more-')) {
-                            config = VIDEO_CONFIG.more[videoPair];
-                        } else if (videoPair.startsWith('model-')) {
-                            config = VIDEO_CONFIG.model[videoPair];
-                        } else if (videoPair.startsWith('enhancing-')) {
-                            config = VIDEO_CONFIG.enhancing[videoPair];
+                        } else if (videoPair.startsWith('backgroundchange-')) {
+                            config = VIDEO_CONFIG.backgroundchange[videoPair];
+                        } else if (videoPair.startsWith('localchange-')) {
+                            config = VIDEO_CONFIG.localchange[videoPair];
+                        } else if (videoPair.startsWith('localremove-')) {
+                            config = VIDEO_CONFIG.localremove[videoPair];
+                        } else if (videoPair.startsWith('localadd-')) {
+                            config = VIDEO_CONFIG.localadd[videoPair];
+                        } else if (videoPair.startsWith('subtitles-')) {
+                            config = VIDEO_CONFIG.subtitles[videoPair];
+                        } else if (videoPair.startsWith('camera-')) {
+                            config = VIDEO_CONFIG.camera[videoPair];
+                        } else if (videoPair.startsWith('creative-')) {
+                            config = VIDEO_CONFIG.creative[videoPair];
                         }
 
                         if (config && config.prompt) {

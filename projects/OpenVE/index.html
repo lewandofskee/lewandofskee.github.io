@@ -1025,6 +1025,54 @@
                         <div class="video-prompt"></div>
                     </div>
                 </div>
+                <div class="video-container">
+                    <div class="video-slider" data-video-pair="globalstyle-5">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="video-container">
+                    <div class="video-slider" data-video-pair="globalstyle-6">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="video-container">
+                    <div class="video-slider" data-video-pair="globalstyle-7">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
+                <div class="video-container">
+                    <div class="video-slider" data-video-pair="globalstyle-8">
+                        <video class="video-before" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <video class="video-after" muted loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="slider-handle"></div>
+                        <div class="video-prompt"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -1854,8 +1902,8 @@
 
                     // Find the config for this video pair
                     let config = null;
-                    if (videoPair.startsWith('global-')) {
-                        config = VIDEO_CONFIG.global[videoPair];
+                    if (videoPair.startsWith('globalstyle-')) {
+                        config = VIDEO_CONFIG.globalstyle[videoPair];
                     } else if (videoPair.startsWith('local-')) {
                         config = VIDEO_CONFIG.local[videoPair];
                     } else if (videoPair.startsWith('more-')) {
@@ -1999,8 +2047,8 @@
                     if (promptElement && videoPair) {
                         let config = null;
 
-                        if (videoPair.startsWith('global-')) {
-                            config = VIDEO_CONFIG.global[videoPair];
+                        if (videoPair.startsWith('globalstyle-')) {
+                            config = VIDEO_CONFIG.globalstyle[videoPair];
                         } else if (videoPair.startsWith('local-')) {
                             config = VIDEO_CONFIG.local[videoPair];
                         } else if (videoPair.startsWith('more-')) {

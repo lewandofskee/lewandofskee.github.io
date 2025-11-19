@@ -918,6 +918,18 @@
                 dataset of one million high-fidelity video editing examples. We trained our model, <em>Editto</em>, on Ditto-1M
                 with a curriculum learning strategy. The results demonstrate superior instruction-following ability and
                 establish a new state-of-the-art in instruction-based video editing.
+                The quality and diversity of instruction-based image editing datasets are continuously increasing, 
+                yet large-scale, high-quality datasets for instruction-based video editing remain scarce. To address this gap, 
+                we introduce <em>OpenVE-3M</em>, an open-source, large-scale, and high-quality dataset for instruction-based video editing. 
+                It comprises two primary categories: spatially-aligned edits (Global Style, Background Change, Local Change, 
+                Local Remove, Local Add, and Subtitles Edit) and non-spatially-aligned edits (Camera Multi-Shot Edit and Creative Edit). 
+                All edit types are generated via a meticulously designed data pipeline with rigorous quality filtering, 
+                a process consuming in excess of 10,000 GPU-days. OpenVE-3M surpasses existing open-source datasets in terms of scale, 
+                diversity of edit types, instruction length, and overall quality. Furthermore, to address the lack of 
+                a unified benchmark in the field, we construct <em>OpenVE-Bench</em>, containing 431 video-edit pairs that cover 
+                a diverse range of editing tasks with three key metrics highly aligned with human judgment. 
+                We present <em>OpenVE-Edit</em>, a 5B model trained on our dataset that demonstrates remarkable efficiency and 
+                effectiveness by setting a new state-of-the-art on OpenVE-Bench, outperforming all prior open-source models including a 14B baseline.
             </p>
         </div>
     </section>

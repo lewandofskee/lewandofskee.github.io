@@ -1863,7 +1863,14 @@
         <div class="section-header-content">
             <h2 class="section-title">Method: OpenVE-Edit</h2>
             <p class="section-description">
-                
+                OpenVE-Edit, consists of three main modules: a MLLM, a MoE-Connector, and a DiT. The input
+                editing instruction and video are jointly fed into the MLLM to capture the semantic relationships between
+                the instruction and the visual content. Subsequently, a task-aware MoE-Connector processes the hidden
+                features from the MLLM, decoupling them through multiple expert networks. These processed features are
+                then concatenated along the token dimension with the instruction features encoded by umT5. Concurrently,
+                the latent features of the original video, derived from a VAE, are concatenated with noise along channel
+                dimension. This composite latent representation subsequently interacts with the combined semantic editing
+                features through the Cross-Attention mechanism in the DiT model.
             </p>
         </div>
         <div style="text-align: center;">
@@ -1881,7 +1888,9 @@
         <div class="section-header-content">
             <h2 class="section-title">Benchmar: OpenVE-Bench</h2>
             <p class="section-description">
-                
+                OpenVE-Bench is constructed with two primary categories: Spatially-Aligned and Non-Spatially-Aligned edits. These are further divided
+                into eight fine-grained subcategories, totaling 431 IVE pairs, with each subcategory containing over 50 video
+                clips on average.
             </p>
         </div>
         <div style="text-align: center;">

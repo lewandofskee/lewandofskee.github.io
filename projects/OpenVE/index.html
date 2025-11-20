@@ -66,10 +66,11 @@
         }
 
         .logo-image {
-            width: 350px; /* Adjust as needed */
+            width: 350px; /* 您可以根据需要调整 */
             height: auto;
             max-width: 90vw;
-            max-height: 150px; /* Prevents the logo from being too tall */
+            max-height: 150px; /* 防止 logo 过高 */
+            margin-bottom: 0.5rem; /* 添加这行以创建与下方内容的间距 */
         }
 
         .authors-section {
@@ -837,11 +838,12 @@
 <body>
     <!-- Hero Section -->
     <section class="hero-section">
-        <div>
-            <h1 class="hero-title">OpenVE-3M</h1>
+        <!-- 核心改动区域开始 -->
+        <div class="hero-content">
+            <!-- 1. 将原来的 H1 标题替换为下面的 IMG 标签 -->
+            <img src="logo.jpg" alt="OpenVE-3M Logo" class="logo-image">
+            
             <p class="hero-subtitle">A Large-Scale High-Quality Dataset for Instruction-Guided Video Editing</p>
-            <!-- <img src="Logo_OpenVE.png" alt="OpenVE-3M Logo" class="logo-image">
-            <p class="hero-subtitle">A Large-Scale High-Quality Dataset for Instruction-Guided Video Editing</p> -->
 
             <div class="authors-section">
                 <div class="authors">
@@ -897,24 +899,10 @@
                         <span>Benchmark (Under Review)</span>
                     </a>
                 </div>
-
-                <!-- <div class="promo-video-section"> -->
-                    <!-- <div class="promo-video-container">
-                        <video class="promo-video" controls>
-                            <source src="./.mp4" type="video/mp4">
-                        </video>
-                    </div> -->
-                    <!-- <div class="promo-video-container">
-                        <video class="promo-video" controls>
-                            <source src="./.mp4" type="video/mp4">
-                        </video>
-                    </div>
-                    <div class="promo-video-description">We highly recommend watching the video with sound on 💃</div> -->
-                <!-- </div> -->
             </div>
         </div>
+        <!-- 核心改动区域结束 -->
     </section>
-
 
     <!-- Dataset Section Header -->
     <section class="section-header dataset-header">

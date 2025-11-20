@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ditto: Scaling Instruction-Based Video Editing with a High-Quality Synthetic Dataset</title>
+    <title>OpenVE-3M: A Large-Scale High-Quality Dataset for Instruction-Guided Video Editing</title>
     <link rel="icon" href="logo.jpg" type="image/jpg">
     <link
         href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500&display=swap"
@@ -885,12 +885,12 @@
                 <!-- <div class="promo-video-section"> -->
                     <!-- <div class="promo-video-container">
                         <video class="promo-video" controls>
-                            <source src="./ditto_model.mp4" type="video/mp4">
+                            <source src="./.mp4" type="video/mp4">
                         </video>
                     </div> -->
                     <!-- <div class="promo-video-container">
                         <video class="promo-video" controls>
-                            <source src="./ditto_dataset.mp4" type="video/mp4">
+                            <source src="./.mp4" type="video/mp4">
                         </video>
                     </div>
                     <div class="promo-video-description">We highly recommend watching the video with sound on 💃</div> -->
@@ -905,19 +905,6 @@
         <div class="section-header-content">
             <h2 class="section-title">Abstract</h2>
             <p class="section-description" style="text-align: center;">
-                Instruction-based video editing promises to democratize content creation, yet its progress is severely
-                hampered by the scarcity of large-scale, high-quality training data. We introduce <em>Ditto</em>, a holistic
-                framework designed to tackle this fundamental challenge. At its heart, Ditto features a novel data
-                generation pipeline that fuses the creative diversity of a leading image editor with an in-context video
-                generator, overcoming the limited scope of existing models. To make this process viable, our framework
-                resolves the prohibitive cost-quality trade-off by employing an efficient, distilled model architecture
-                augmented by a temporal enhancer, which simultaneously reduces computational overhead and improves
-                temporal coherence. Finally, to achieve full scalability, this entire pipeline is driven by an
-                intelligent agent that crafts diverse instructions and rigorously filters the output, ensuring quality
-                control at scale. Using this framework, we invested over 12,000 GPU-days to build <em>Ditto-1M</em>, a new
-                dataset of one million high-fidelity video editing examples. We trained our model, <em>Editto</em>, on Ditto-1M
-                with a curriculum learning strategy. The results demonstrate superior instruction-following ability and
-                establish a new state-of-the-art in instruction-based video editing.
                 The quality and diversity of instruction-based image editing datasets are continuously increasing, 
                 yet large-scale, high-quality datasets for instruction-based video editing remain scarce. To address this gap, 
                 we introduce <em>OpenVE-3M</em>, an open-source, large-scale, and high-quality dataset for instruction-based video editing. 
